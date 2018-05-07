@@ -23,7 +23,7 @@ import org.apache.logging.log4j.Logger;
 import com.callcenter.employees.Rank;
 
 /**
- * A single call to the call centre.
+ * A single call to the call center.
  * 
  * @author pviotti
  */

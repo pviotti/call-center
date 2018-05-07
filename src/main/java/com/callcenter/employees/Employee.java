@@ -22,6 +22,11 @@ import java.util.Random;
 import com.callcenter.Call;
 import com.callcenter.CallDispatcher;
 
+/**
+ * An employee of the call center.
+ * 
+ * @author pviotti
+ */
 public class Employee {
 
     CallDispatcher callDispatcher;
