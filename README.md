@@ -19,7 +19,7 @@ To compile: `mvn compile`.
 To run the tests: `mvn test`.  
 To generate the javadocs site: `mvn javadoc:javadoc`.  
 
-The call center main logic is represented by the `CallDispatcher` class, while
+The call center main logic is implemented in the `CallDispatcher` class, while
 the `com.callcenter.employees` package contains the classes modeling the attributes 
 and behavior of the various employees of the call center.
 
@@ -29,22 +29,22 @@ and behavior of the various employees of the call center.
 This is an interesting study project as it presents several crucial aspects
 of programming: object-oriented modeling
 (e.g. in the way we use class inheritance to model the hierarchy of employees),
-and concurrent programming (e.g. in the way we use a `ConcurrentLinkedQueue`
+and concurrent programming (e.g. as we use a `ConcurrentLinkedQueue`
 to share among different threads the queues of not yet serviced calls).  
 
 Several aspects of this implementation are deliberately simplistic or suboptimal for 
 large scale deployments, due to the nature and goals of this project.
-In the following we address each of them and hint at possible improvements.  
+In the following we hint at possible improvements.  
 
  * *Actor-based architecture*. A more scalable way of approaching this problem consists in modeling 
  the call center according to the [actor programming paradigm][actors]: 
  each employee is an actor with its own thread constantly checking its message box and handling the messages that it receives.
  While the asynchronous nature of this paradigm could render the code more difficult to understand,
- the lack of shared data structures would ease the burden of coping with concurrency side effects.
+ the lack of shared data structures would ease the burden of coping with side effects due to concurrency.
  An implementation for Java and Scala of this paradigm can be found in the [Akka][akka] library.
  Other languages, such as Erlang, implement this paradigm natively.
  
- * *Database and message brokers*. Handling a great number of calls would require a more scalable
+ * *Databases and message brokers*. Handling a great number of calls would require a more scalable
  way of storing calls' status and the call queues of the call center. 
  This could be accomplished by using a set of distributed workers for the employees and let them communicate 
  through a messaging/queue/pub-sub service such as RabbitMQ, Kafka, etc. 
