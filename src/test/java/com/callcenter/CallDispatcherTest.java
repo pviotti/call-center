@@ -59,7 +59,7 @@ public class CallDispatcherTest {
 		}
 
 		public boolean hasBeenServedCorrectly() {
-			return !call.isActive && call.solvedBy.getValue() >= call.priority;
+			return !call.isActive && call.handlerRank.getValue() >= call.priority;
 		}
 	}
 
@@ -86,17 +86,17 @@ public class CallDispatcherTest {
 
 	@Test
 	public void testPrioritizedCalls() {
-		Call priritizedCall1 = new Call(1);
-		assertTrue(priritizedCall1.isActive);
-		instance.dispatchCall(priritizedCall1);
-		assertFalse(priritizedCall1.isActive);
-		assertTrue(priritizedCall1.solvedBy.getValue() >= priritizedCall1.priority);
+		Call prioritizedCall1 = new Call(1);
+		assertTrue(prioritizedCall1.isActive);
+		instance.dispatchCall(prioritizedCall1);
+		assertFalse(prioritizedCall1.isActive);
+		assertTrue(prioritizedCall1.handlerRank.getValue() >= prioritizedCall1.priority);
 
-		Call priritizedCall2 = new Call(2);
-		assertTrue(priritizedCall2.isActive);
-		instance.dispatchCall(priritizedCall2);
-		assertFalse(priritizedCall2.isActive);
-		assertTrue(priritizedCall2.solvedBy.getValue() >= priritizedCall2.priority);
+		Call prioritizedCall2 = new Call(2);
+		assertTrue(prioritizedCall2.isActive);
+		instance.dispatchCall(prioritizedCall2);
+		assertFalse(prioritizedCall2.isActive);
+		assertTrue(prioritizedCall2.handlerRank.getValue() >= prioritizedCall2.priority);
 		testNoQueuedCalls();
 	}
 

@@ -26,6 +26,9 @@ public class Employee {
 
 	CallDispatcher callDispatcher;
 
+	// Employee's details: name, age, address, etc...
+	// private String name = ...
+
 	public final Rank rank;
 	public boolean isFree;
 

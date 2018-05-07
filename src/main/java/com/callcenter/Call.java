@@ -31,9 +31,14 @@ public class Call {
 
 	private static final Logger log = LogManager.getLogger();
 
-	public int priority;
+	/* Corresponds to the minimal Rank of an employee that can handle this call. */
+	public int priority; 
+	
+	/* Whether this call has been serviced. */
 	public boolean isActive;
-	public Rank solvedBy;
+	
+	/* The rank of the employee that serviced this call. */
+	public Rank handlerRank;
 
 	public Call() {
 		this(0);
@@ -62,7 +67,7 @@ public class Call {
 	 *            the rank of the Employee who closed the call.
 	 */
 	public void disconnect(Rank _rank) {
-		this.solvedBy = _rank;
+		this.handlerRank = _rank;
 		this.isActive = false;
 	}
 }
