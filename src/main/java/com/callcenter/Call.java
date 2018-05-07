@@ -29,45 +29,45 @@ import com.callcenter.employees.Rank;
  */
 public class Call {
 
-	private static final Logger log = LogManager.getLogger();
+    private static final Logger log = LogManager.getLogger();
 
-	/* Corresponds to the minimal Rank of an employee that can handle this call. */
-	public int priority; 
-	
-	/* Whether this call has been serviced. */
-	public boolean isActive;
-	
-	/* The rank of the employee that serviced this call. */
-	public Rank handlerRank;
+    /* Corresponds to the minimal Rank of an employee that can handle this call. */
+    public int priority;
 
-	public Call() {
-		this(0);
-	}
+    /* Whether this call has been serviced. */
+    public boolean isActive;
 
-	public Call(int _priority) {
-		this.priority = _priority;
-		this.isActive = true;
-	}
+    /* The rank of the employee that serviced this call. */
+    public Rank handlerRank;
 
-	/**
-	 * Say something to the customer.
-	 * 
-	 * @param message
-	 *            the message to be communicated to the customer.
-	 */
-	public void say(String message) {
-		log.info(message);
-	}
+    public Call() {
+        this(0);
+    }
 
-	/**
-	 * Mark this call as solved by a certain employee of rank _rank and hang up (set
-	 * isActive to false).
-	 * 
-	 * @param _rank
-	 *            the rank of the Employee who closed the call.
-	 */
-	public void disconnect(Rank _rank) {
-		this.handlerRank = _rank;
-		this.isActive = false;
-	}
+    public Call(int _priority) {
+        this.priority = _priority;
+        this.isActive = true;
+    }
+
+    /**
+     * Say something to the customer.
+     * 
+     * @param message
+     *            the message to be communicated to the customer.
+     */
+    public void say(String message) {
+        log.info(message);
+    }
+
+    /**
+     * Mark this call as solved by a certain employee of rank _rank and hang up (set
+     * isActive to false).
+     * 
+     * @param _rank
+     *            the rank of the Employee who closed the call.
+     */
+    public void disconnect(Rank _rank) {
+        this.handlerRank = _rank;
+        this.isActive = false;
+    }
 }

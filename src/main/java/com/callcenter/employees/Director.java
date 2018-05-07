@@ -25,7 +25,7 @@ import com.callcenter.CallDispatcher;
  * @author pviotti
  */
 public class Director extends Employee {
-	public Director(CallDispatcher _dispatcher) {
-		super(Rank.DIRECTOR, _dispatcher);
-	}
+    public Director(CallDispatcher _dispatcher) {
+        super(Rank.DIRECTOR, _dispatcher);
+    }
 }

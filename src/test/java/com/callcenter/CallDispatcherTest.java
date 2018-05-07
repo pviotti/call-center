@@ -35,98 +35,98 @@ import org.junit.Test;
 
 public class CallDispatcherTest {
 
-	CallDispatcher instance = null;
+    CallDispatcher instance = null;
 
-	private int NUM_CALLERS = 30;
-	private int NUM_THREADS = 6;
-	private Random rnd = new Random();
+    private int NUM_CALLERS = 30;
+    private int NUM_THREADS = 6;
+    private Random rnd = new Random();
 
-	private class Caller implements Callable<Boolean> {
-		Call call;
+    private class Caller implements Callable<Boolean> {
+        Call call;
 
-		public Caller(Call _call) {
-			this.call = _call;
-		}
+        public Caller(Call _call) {
+            this.call = _call;
+        }
 
-		@Override
-		public Boolean call() throws Exception {
-			instance.dispatchCall(call);
-			/*
-			 * NB: a Caller thread may finish when its call has not been served yet, since
-			 * it may have been enqueued due to lack of available Employees.
-			 */
-			return !call.isActive;
-		}
+        @Override
+        public Boolean call() throws Exception {
+            instance.dispatchCall(call);
+            /*
+             * NB: a Caller thread may finish when its call has not been served yet, since
+             * it may have been enqueued due to lack of available Employees.
+             */
+            return !call.isActive;
+        }
 
-		public boolean hasBeenServedCorrectly() {
-			return !call.isActive && call.handlerRank.getValue() >= call.priority;
-		}
-	}
+        public boolean hasBeenServedCorrectly() {
+            return !call.isActive && call.handlerRank.getValue() >= call.priority;
+        }
+    }
 
-	@Before
-	public void init() {
-		instance = new CallDispatcher(3, 2, 1);
-	}
+    @Before
+    public void init() {
+        instance = new CallDispatcher(3, 2, 1);
+    }
 
-	@Test
-	public void testBasicCall() {
-		Call basicCall = new Call();
-		assertTrue(basicCall.isActive);
-		instance.dispatchCall(basicCall);
-		assertFalse(basicCall.isActive);
-		testNoQueuedCalls();
-	}
-	
-	@Test
-	public void testInvalidCalls() {
-		instance.dispatchCall(null);
-		instance.dispatchCall(new Call(2342));
-		testNoQueuedCalls();
-	}
+    @Test
+    public void testBasicCall() {
+        Call basicCall = new Call();
+        assertTrue(basicCall.isActive);
+        instance.dispatchCall(basicCall);
+        assertFalse(basicCall.isActive);
+        testNoQueuedCalls();
+    }
 
-	@Test
-	public void testPrioritizedCalls() {
-		Call prioritizedCall1 = new Call(1);
-		assertTrue(prioritizedCall1.isActive);
-		instance.dispatchCall(prioritizedCall1);
-		assertFalse(prioritizedCall1.isActive);
-		assertTrue(prioritizedCall1.handlerRank.getValue() >= prioritizedCall1.priority);
+    @Test
+    public void testInvalidCalls() {
+        instance.dispatchCall(null);
+        instance.dispatchCall(new Call(2342));
+        testNoQueuedCalls();
+    }
 
-		Call prioritizedCall2 = new Call(2);
-		assertTrue(prioritizedCall2.isActive);
-		instance.dispatchCall(prioritizedCall2);
-		assertFalse(prioritizedCall2.isActive);
-		assertTrue(prioritizedCall2.handlerRank.getValue() >= prioritizedCall2.priority);
-		testNoQueuedCalls();
-	}
+    @Test
+    public void testPrioritizedCalls() {
+        Call prioritizedCall1 = new Call(1);
+        assertTrue(prioritizedCall1.isActive);
+        instance.dispatchCall(prioritizedCall1);
+        assertFalse(prioritizedCall1.isActive);
+        assertTrue(prioritizedCall1.handlerRank.getValue() >= prioritizedCall1.priority);
 
-	@Test
-	public void testConcurrentCalls() {
-		ArrayList<Caller> callers = new ArrayList<Caller>();
-		for (int i = 0; i < NUM_CALLERS; i++)
-			callers.add(new Caller(new Call(rnd.nextInt(CallDispatcher.RANKS))));
+        Call prioritizedCall2 = new Call(2);
+        assertTrue(prioritizedCall2.isActive);
+        instance.dispatchCall(prioritizedCall2);
+        assertFalse(prioritizedCall2.isActive);
+        assertTrue(prioritizedCall2.handlerRank.getValue() >= prioritizedCall2.priority);
+        testNoQueuedCalls();
+    }
 
-		ExecutorService ex = Executors.newFixedThreadPool(NUM_THREADS);
-		ArrayList<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
-		try {
-			for (int i = 0; i < NUM_CALLERS; i++)
-				futures.add(ex.submit(callers.get(i)));
+    @Test
+    public void testConcurrentCalls() {
+        ArrayList<Caller> callers = new ArrayList<Caller>();
+        for (int i = 0; i < NUM_CALLERS; i++)
+            callers.add(new Caller(new Call(rnd.nextInt(CallDispatcher.RANKS))));
 
-			// Wait for all Caller threads to terminate
-			for (Future<Boolean> future : futures)
-				future.get();
+        ExecutorService ex = Executors.newFixedThreadPool(NUM_THREADS);
+        ArrayList<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
+        try {
+            for (int i = 0; i < NUM_CALLERS; i++)
+                futures.add(ex.submit(callers.get(i)));
 
-			for (Caller caller : callers)
-				assertTrue(caller.hasBeenServedCorrectly());
-		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
-		}
-		testNoQueuedCalls();
-	}
-	
-	private void testNoQueuedCalls() {
-		int[] expQueuesSize = new int[CallDispatcher.RANKS];
-		Arrays.fill(expQueuesSize, 0);
-		assertArrayEquals(expQueuesSize, instance.getQueuesSize());
-	}
+            // Wait for all Caller threads to terminate
+            for (Future<Boolean> future : futures)
+                future.get();
+
+            for (Caller caller : callers)
+                assertTrue(caller.hasBeenServedCorrectly());
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        testNoQueuedCalls();
+    }
+
+    private void testNoQueuedCalls() {
+        int[] expQueuesSize = new int[CallDispatcher.RANKS];
+        Arrays.fill(expQueuesSize, 0);
+        assertArrayEquals(expQueuesSize, instance.getQueuesSize());
+    }
 }

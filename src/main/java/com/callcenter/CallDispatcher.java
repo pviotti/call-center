@@ -33,122 +33,122 @@ import com.callcenter.employees.Respondent;
  */
 public class CallDispatcher {
 
-	static final int RANKS = 3;
+    static final int RANKS = 3;
 
-	final int numRespondents;
-	final int numManagers;
-	final int numDirectors;
+    final int numRespondents;
+    final int numManagers;
+    final int numDirectors;
 
-	final ArrayList<Employee>[] employeeLevels = new ArrayList[RANKS];
-	final ConcurrentLinkedQueue<Call>[] callQueues = new ConcurrentLinkedQueue[RANKS];
+    final ArrayList<Employee>[] employeeLevels = new ArrayList[RANKS];
+    final ConcurrentLinkedQueue<Call>[] callQueues = new ConcurrentLinkedQueue[RANKS];
 
-	static final String MSG_WAIT = "All employees are busy. Please hang on: you'll be served as soon as possible.";
+    static final String MSG_WAIT = "All employees are busy. Please hang on: you'll be served as soon as possible.";
 
-	/**
-	 * Creates a call dispatched with the given numbers of respondents, managers and
-	 * directors.
-	 * 
-	 * @param _numRespondents
-	 *            number of respondents
-	 * @param _numManagers
-	 *            number of managers
-	 * @param _numDirectors
-	 *            number of directors
-	 */
-	public CallDispatcher(int _numRespondents, int _numManagers, int _numDirectors) {
-		this.numRespondents = _numRespondents;
-		this.numManagers = _numManagers;
-		this.numDirectors = _numDirectors;
+    /**
+     * Creates a call dispatched with the given numbers of respondents, managers and
+     * directors.
+     * 
+     * @param _numRespondents
+     *            number of respondents
+     * @param _numManagers
+     *            number of managers
+     * @param _numDirectors
+     *            number of directors
+     */
+    public CallDispatcher(int _numRespondents, int _numManagers, int _numDirectors) {
+        this.numRespondents = _numRespondents;
+        this.numManagers = _numManagers;
+        this.numDirectors = _numDirectors;
 
-		// Create respondents
-		ArrayList<Employee> respondents = new ArrayList<Employee>(numRespondents);
-		for (int i = 0; i < numRespondents; i++)
-			respondents.add(new Respondent(this));
-		employeeLevels[Rank.RESPONDENT.getValue()] = respondents;
+        // Create respondents
+        ArrayList<Employee> respondents = new ArrayList<Employee>(numRespondents);
+        for (int i = 0; i < numRespondents; i++)
+            respondents.add(new Respondent(this));
+        employeeLevels[Rank.RESPONDENT.getValue()] = respondents;
 
-		// Create managers
-		ArrayList<Employee> managers = new ArrayList<Employee>(numManagers);
-		for (int i = 0; i < numManagers; i++)
-			managers.add(new Manager(this));
-		employeeLevels[Rank.MANAGER.getValue()] = managers;
+        // Create managers
+        ArrayList<Employee> managers = new ArrayList<Employee>(numManagers);
+        for (int i = 0; i < numManagers; i++)
+            managers.add(new Manager(this));
+        employeeLevels[Rank.MANAGER.getValue()] = managers;
 
-		// Create directors
-		ArrayList<Employee> directors = new ArrayList<Employee>(numDirectors);
-		for (int i = 0; i < numDirectors; i++)
-			directors.add(new Director(this));
-		employeeLevels[Rank.DIRECTOR.getValue()] = directors;
+        // Create directors
+        ArrayList<Employee> directors = new ArrayList<Employee>(numDirectors);
+        for (int i = 0; i < numDirectors; i++)
+            directors.add(new Director(this));
+        employeeLevels[Rank.DIRECTOR.getValue()] = directors;
 
-		// Initialise call queues
-		for (int i = 0; i < RANKS; i++)
-			callQueues[i] = new ConcurrentLinkedQueue<Call>();
-	}
+        // Initialise call queues
+        for (int i = 0; i < RANKS; i++)
+            callQueues[i] = new ConcurrentLinkedQueue<Call>();
+    }
 
-	/**
-	 * Routes the call to the first available employee having the minimal rank
-	 * corresponding to the call's rank, or saves it in a queue if no employee
-	 * available.
-	 * 
-	 * @param call
-	 *            the call being dispatched
-	 */
-	public void dispatchCall(Call call) {
-		if (call == null || call.priority >= RANKS)
-			return;
-		Employee emp = getHandler(call);
-		if (emp != null) {
-			emp.handleCall(call);
-		} else {
-			// No employee is available: place the call into queue according to its priority
-			call.say(MSG_WAIT);
-			callQueues[call.priority].add(call);
-		}
-	}
+    /**
+     * Routes the call to the first available employee having the minimal rank
+     * corresponding to the call's rank, or saves it in a queue if no employee
+     * available.
+     * 
+     * @param call
+     *            the call being dispatched
+     */
+    public void dispatchCall(Call call) {
+        if (call == null || call.priority >= RANKS)
+            return;
+        Employee emp = getHandler(call);
+        if (emp != null) {
+            emp.handleCall(call);
+        } else {
+            // No employee is available: place the call into queue according to its priority
+            call.say(MSG_WAIT);
+            callQueues[call.priority].add(call);
+        }
+    }
 
-	/**
-	 * Get the first available employee having the minimal rank corresponding to the
-	 * call's rank.
-	 * 
-	 * @param call
-	 * @return an available employee compatible with the call's rank or null if no
-	 *         employee is available
-	 */
-	private Employee getHandler(Call call) {
-		for (int level = call.priority; level < RANKS; level++) {
-			// starts checking for free employees at the rank level of the call
-			ArrayList<Employee> employeeLevel = employeeLevels[level];
-			for (Employee emp : employeeLevel)
-				if (emp.isFree)
-					return emp;
-		}
-		return null;
-	}
+    /**
+     * Get the first available employee having the minimal rank corresponding to the
+     * call's rank.
+     * 
+     * @param call
+     * @return an available employee compatible with the call's rank or null if no
+     *         employee is available
+     */
+    private Employee getHandler(Call call) {
+        for (int level = call.priority; level < RANKS; level++) {
+            // starts checking for free employees at the rank level of the call
+            ArrayList<Employee> employeeLevel = employeeLevels[level];
+            for (Employee emp : employeeLevel)
+                if (emp.isFree)
+                    return emp;
+        }
+        return null;
+    }
 
-	/**
-	 * Called by an employee when he/she gets free to handle queued calls.
-	 * 
-	 * @param emp
-	 *            the employee that wants to handle a new call
-	 */
-	public void getNextCall(Employee emp) {
-		for (int rank = emp.rank.getValue(); rank >= 0; rank--) {
-			ConcurrentLinkedQueue<Call> queque = callQueues[rank];
-			Call call = queque.poll();
-			if (call != null) {
-				emp.handleCall(call);
-				return;
-			}
-		}
-	}
+    /**
+     * Called by an employee when he/she gets free to handle queued calls.
+     * 
+     * @param emp
+     *            the employee that wants to handle a new call
+     */
+    public void getNextCall(Employee emp) {
+        for (int rank = emp.rank.getValue(); rank >= 0; rank--) {
+            ConcurrentLinkedQueue<Call> queque = callQueues[rank];
+            Call call = queque.poll();
+            if (call != null) {
+                emp.handleCall(call);
+                return;
+            }
+        }
+    }
 
-	/**
-	 * Get the length of the call queues.
-	 * 
-	 * @return an array with the length of the queues for each rank.
-	 */
-	public int[] getQueuesSize() {
-		int[] res = new int[RANKS];
-		for (int i = 0; i < RANKS; i++)
-			res[i] = callQueues[i].size();
-		return res;
-	}
+    /**
+     * Get the length of the call queues.
+     * 
+     * @return an array with the length of the queues for each rank.
+     */
+    public int[] getQueuesSize() {
+        int[] res = new int[RANKS];
+        for (int i = 0; i < RANKS; i++)
+            res[i] = callQueues[i].size();
+        return res;
+    }
 }

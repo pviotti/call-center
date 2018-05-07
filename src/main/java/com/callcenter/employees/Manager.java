@@ -25,7 +25,7 @@ import com.callcenter.CallDispatcher;
  * @author pviotti
  */
 public class Manager extends Employee {
-	public Manager(CallDispatcher _dispatcher) {
-		super(Rank.MANAGER, _dispatcher);
-	}
+    public Manager(CallDispatcher _dispatcher) {
+        super(Rank.MANAGER, _dispatcher);
+    }
 }

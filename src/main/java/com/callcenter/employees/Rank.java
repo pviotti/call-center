@@ -23,15 +23,15 @@ package com.callcenter.employees;
  * @author pviotti
  */
 public enum Rank {
-	RESPONDENT(0), MANAGER(1), DIRECTOR(2);
+    RESPONDENT(0), MANAGER(1), DIRECTOR(2);
 
-	private final int rank;
+    private final int rank;
 
-	Rank(int _rank) {
-		rank = _rank;
-	}
+    Rank(int _rank) {
+        rank = _rank;
+    }
 
-	public int getValue() {
-		return rank;
-	}
+    public int getValue() {
+        return rank;
+    }
 }
