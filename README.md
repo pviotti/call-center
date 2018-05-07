@@ -4,9 +4,11 @@ This project provides a proof-of-concept object-oriented implementation of the e
 compose a call center according to the following problem statement.
 
     Imagine you have a call center with three levels of employees: respondent, manager, and director.  
-    An incoming telephone call must be  first allocated to a respondent who is free. If the respondent can't handle the call, he or she must escalate the call to a manager. 
+    An incoming telephone call must be  first allocated to a respondent who is free. 
+    If the respondent can't handle the call, he or she must escalate the call to a manager. 
     If the manager is not free or not able to handle it, then the call should be escalated to a director. 
-    Design the classes and data structures for this problem. Implement a method `dispatchCall()` which assigns a call to the  first available employee.
+    Design the classes and data structures for this problem. 
+    Implement a method `dispatchCall()` which assigns a call to the  first available employee.
 
 
 ## Setup and codebase overview
@@ -52,8 +54,9 @@ In the following we address each of them and hint at possible improvements.
 
 ## License
 
-GPL-3.
+[GPL-3][gpl3].
 
 
  [akka]: https://akka.io/
  [actors]: https://en.wikipedia.org/wiki/Actor_model
+ [gpl3]: https://www.gnu.org/licenses/gpl-3.0.en.html
