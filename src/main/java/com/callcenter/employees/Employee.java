@@ -34,16 +34,15 @@ public class Employee {
     // Employee's details: name, age, address, etc...
     // private String name = ...
 
-    public final Rank rank;
-    public boolean isFree;
+    private final Rank rank;
+    private boolean isFree;
 
-    public static final String MSG_START = "Hi! I'm a %s. How can I help you?";
-    public static final String MSG_ESCALATE = "This looks like a challenging issue! I'm going to call my boss.";
-    public static final String MSG_END = "Issue solved! Thank you for calling, have a nice day!";
+    private static final String MSG_START = "Hi! I'm a %s. How can I help you?";
+    private static final String MSG_ESCALATE = "This looks like a challenging issue! I'm going to call my boss.";
+    private static final String MSG_END = "Issue solved! Thank you for calling, have a nice day!";
 
-    private static final int CALL_DURATION = 100;
-
-    private final Random rnd = new Random();
+    private static final int MAX_CALL_DURATION = 100;
+    private static final Random rnd = new Random();
 
     public Employee(Rank _rank, CallDispatcher _dispatcher) {
         this.rank = _rank;
@@ -59,11 +58,12 @@ public class Employee {
      */
     public void handleCall(Call call) {
         isFree = false;
+        call.setStartTime();
         call.say(String.format(MSG_START, rank.toString().toLowerCase()));
 
         // Emulate conversation time
         try {
-            Thread.sleep(rnd.nextInt(CALL_DURATION));
+            Thread.sleep(rnd.nextInt(MAX_CALL_DURATION));
         } catch (InterruptedException e) {
         }
 
@@ -79,7 +79,7 @@ public class Employee {
      * 
      * @param call
      */
-    void escalateCall(Call call) {
+    private void escalateCall(Call call) {
         call.say(MSG_ESCALATE);
         call.priority = rank.getValue() + 1;
         callDispatcher.dispatchCall(call);
@@ -92,10 +92,28 @@ public class Employee {
      * 
      * @param call
      */
-    void endCall(Call call) {
-        call.say(MSG_END);
+    private void endCall(Call call) {
         call.disconnect(this.rank);
+        call.say(MSG_END + "[" + call.getDuration() + "ms]");
         isFree = true;
         callDispatcher.getNextCall(this);
+    }
+
+    /**
+     * Returns whether the employee is free at the moment.
+     * 
+     * @return boolean on whether the employee is free.
+     */
+    public boolean isFree() {
+        return isFree;
+    }
+
+    /**
+     * Returns the rank of the employee.
+     * 
+     * @return Rank object of the employee.
+     */
+    public Rank getRank() {
+        return rank;
     }
 }

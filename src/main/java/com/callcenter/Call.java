@@ -40,6 +40,9 @@ public class Call {
     /* The rank of the employee that serviced this call. */
     public Rank handlerRank;
 
+    private long startTime = 0;
+    private long endTime = 0;
+
     public Call() {
         this(0);
     }
@@ -69,5 +72,23 @@ public class Call {
     public void disconnect(Rank _rank) {
         this.handlerRank = _rank;
         this.isActive = false;
+        this.endTime = System.currentTimeMillis();
+    }
+
+    /**
+     * Set the call start time.
+     */
+    public void setStartTime() {
+        if (this.startTime == 0)
+            this.startTime = System.currentTimeMillis();
+    }
+
+    /**
+     * Get the call duration.
+     * 
+     * @return the call duration in milliseconds.
+     */
+    public long getDuration() {
+        return this.endTime - this.startTime;
     }
 }

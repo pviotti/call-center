@@ -35,12 +35,12 @@ public class CallDispatcher {
 
     static final int RANKS = 3;
 
-    final int numRespondents;
-    final int numManagers;
-    final int numDirectors;
+    private final int numRespondents;
+    private final int numManagers;
+    private final int numDirectors;
 
-    final ArrayList<Employee>[] employeeLevels = new ArrayList[RANKS];
-    final ConcurrentLinkedQueue<Call>[] callQueues = new ConcurrentLinkedQueue[RANKS];
+    private final ArrayList<Employee>[] employeeLevels = new ArrayList[RANKS];
+    private final ConcurrentLinkedQueue<Call>[] callQueues = new ConcurrentLinkedQueue[RANKS];
 
     static final String MSG_WAIT = "All employees are busy. Please hang on: you'll be served as soon as possible.";
 
@@ -92,8 +92,9 @@ public class CallDispatcher {
      *            the call being dispatched
      */
     public void dispatchCall(Call call) {
-        if (call == null || call.priority >= RANKS)
+        if (call == null || call.priority >= RANKS || call.priority < 0)
             return;
+        
         Employee emp = getHandler(call);
         if (emp != null) {
             emp.handleCall(call);
@@ -117,7 +118,7 @@ public class CallDispatcher {
             // starts checking for free employees at the rank level of the call
             ArrayList<Employee> employeeLevel = employeeLevels[level];
             for (Employee emp : employeeLevel)
-                if (emp.isFree)
+                if (emp.isFree())
                     return emp;
         }
         return null;
@@ -130,7 +131,7 @@ public class CallDispatcher {
      *            the employee that wants to handle a new call
      */
     public void getNextCall(Employee emp) {
-        for (int rank = emp.rank.getValue(); rank >= 0; rank--) {
+        for (int rank = emp.getRank().getValue(); rank >= 0; rank--) {
             ConcurrentLinkedQueue<Call> queque = callQueues[rank];
             Call call = queque.poll();
             if (call != null) {

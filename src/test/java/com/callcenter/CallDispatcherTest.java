@@ -80,7 +80,8 @@ public class CallDispatcherTest {
     @Test
     public void testInvalidCalls() {
         instance.dispatchCall(null);
-        instance.dispatchCall(new Call(2342));
+        instance.dispatchCall(new Call(CallDispatcher.RANKS + rnd.nextInt()));
+        instance.dispatchCall(new Call(-1 * rnd.nextInt(50)));
         testNoQueuedCalls();
     }
 
