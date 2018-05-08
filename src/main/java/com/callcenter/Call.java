@@ -17,6 +17,8 @@
  */
 package com.callcenter;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,13 +34,13 @@ public class Call {
     private static final Logger log = LogManager.getLogger();
 
     /* Corresponds to the minimal Rank of an employee that can handle this call. */
-    public int priority;
+    private AtomicInteger priority;
 
     /* Whether this call has been serviced. */
-    public boolean isActive;
+    private boolean isActive;
 
     /* The rank of the employee that serviced this call. */
-    public Rank handlerRank;
+    private Rank handlerRank;
 
     private long startTime = 0;
     private long endTime = 0;
@@ -48,7 +50,7 @@ public class Call {
     }
 
     public Call(int _priority) {
-        this.priority = _priority;
+        this.priority = new AtomicInteger(_priority);
         this.isActive = true;
     }
 
@@ -90,5 +92,42 @@ public class Call {
      */
     public long getDuration() {
         return this.endTime - this.startTime;
+    }
+
+    /**
+     * Get the call priority.
+     * 
+     * @return the call priority as int.
+     */
+    public int getPriority() {
+        return this.priority.get();
+    }
+
+    /**
+     * Set the call priority.
+     * 
+     * @param newValue
+     *            the new priority for the call.
+     */
+    public void setPriority(int newValue) {
+        this.priority.set(newValue);
+    }
+
+    /**
+     * Returns whether the call hasn't been serviced yet.
+     * 
+     * @return boolean on whether the call hasn't ended.
+     */
+    public boolean isActive() {
+        return this.isActive;
+    }
+
+    /**
+     * Get the rank of the employee who ended the call.
+     * 
+     * @return Rank object of the employee who ended the call.
+     */
+    public Rank getHandlerRank() {
+        return this.handlerRank;
     }
 }

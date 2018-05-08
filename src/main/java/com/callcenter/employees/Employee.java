@@ -51,13 +51,14 @@ public class Employee {
     }
 
     /**
-     * Starts handling a call.
+     * Starts handling a call. (Synchronized as a single employee cannot handle more
+     * than one call at a time).
      * 
      * @param call
      *            the call to be handled.
      */
-    public void handleCall(Call call) {
-        isFree = false;
+    public synchronized void handleCall(Call call) {
+        this.isFree = false;
         call.setStartTime();
         call.say(String.format(MSG_START, rank.toString().toLowerCase()));
 
@@ -81,9 +82,9 @@ public class Employee {
      */
     private void escalateCall(Call call) {
         call.say(MSG_ESCALATE);
-        call.priority = rank.getValue() + 1;
+        call.setPriority(this.rank.getValue() + 1);
         callDispatcher.dispatchCall(call);
-        isFree = true;
+        this.isFree = true;
         callDispatcher.getNextCall(this);
     }
 
@@ -95,7 +96,7 @@ public class Employee {
     private void endCall(Call call) {
         call.disconnect(this.rank);
         call.say(MSG_END + "[" + call.getDuration() + "ms]");
-        isFree = true;
+        this.isFree = true;
         callDispatcher.getNextCall(this);
     }
 
@@ -105,7 +106,7 @@ public class Employee {
      * @return boolean on whether the employee is free.
      */
     public boolean isFree() {
-        return isFree;
+        return this.isFree;
     }
 
     /**
@@ -114,6 +115,6 @@ public class Employee {
      * @return Rank object of the employee.
      */
     public Rank getRank() {
-        return rank;
+        return this.rank;
     }
 }

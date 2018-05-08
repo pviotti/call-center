@@ -55,11 +55,11 @@ public class CallDispatcherTest {
              * NB: a Caller thread may finish when its call has not been served yet, since
              * it may have been enqueued due to lack of available Employees.
              */
-            return !call.isActive;
+            return !call.isActive();
         }
 
         public boolean hasBeenServedCorrectly() {
-            return !call.isActive && call.handlerRank.getValue() >= call.priority;
+            return !call.isActive() && call.getHandlerRank().getValue() >= call.getPriority();
         }
     }
 
@@ -71,9 +71,9 @@ public class CallDispatcherTest {
     @Test
     public void testBasicCall() {
         Call basicCall = new Call();
-        assertTrue(basicCall.isActive);
+        assertTrue(basicCall.isActive());
         instance.dispatchCall(basicCall);
-        assertFalse(basicCall.isActive);
+        assertFalse(basicCall.isActive());
         testNoQueuedCalls();
     }
 
@@ -88,16 +88,16 @@ public class CallDispatcherTest {
     @Test
     public void testPrioritizedCalls() {
         Call prioritizedCall1 = new Call(1);
-        assertTrue(prioritizedCall1.isActive);
+        assertTrue(prioritizedCall1.isActive());
         instance.dispatchCall(prioritizedCall1);
-        assertFalse(prioritizedCall1.isActive);
-        assertTrue(prioritizedCall1.handlerRank.getValue() >= prioritizedCall1.priority);
+        assertFalse(prioritizedCall1.isActive());
+        assertTrue(prioritizedCall1.getHandlerRank().getValue() >= prioritizedCall1.getPriority());
 
         Call prioritizedCall2 = new Call(2);
-        assertTrue(prioritizedCall2.isActive);
+        assertTrue(prioritizedCall2.isActive());
         instance.dispatchCall(prioritizedCall2);
-        assertFalse(prioritizedCall2.isActive);
-        assertTrue(prioritizedCall2.handlerRank.getValue() >= prioritizedCall2.priority);
+        assertFalse(prioritizedCall2.isActive());
+        assertTrue(prioritizedCall2.getHandlerRank().getValue() >= prioritizedCall2.getPriority());
         testNoQueuedCalls();
     }
 

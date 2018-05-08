@@ -92,7 +92,7 @@ public class CallDispatcher {
      *            the call being dispatched
      */
     public void dispatchCall(Call call) {
-        if (call == null || call.priority >= RANKS || call.priority < 0)
+        if (call == null || call.getPriority() >= RANKS || call.getPriority() < 0)
             return;
         
         Employee emp = getHandler(call);
@@ -101,7 +101,7 @@ public class CallDispatcher {
         } else {
             // No employee is available: place the call into queue according to its priority
             call.say(MSG_WAIT);
-            callQueues[call.priority].add(call);
+            callQueues[call.getPriority()].add(call);
         }
     }
 
@@ -114,7 +114,7 @@ public class CallDispatcher {
      *         employee is available
      */
     private Employee getHandler(Call call) {
-        for (int level = call.priority; level < RANKS; level++) {
+        for (int level = call.getPriority(); level < RANKS; level++) {
             // starts checking for free employees at the rank level of the call
             ArrayList<Employee> employeeLevel = employeeLevels[level];
             for (Employee emp : employeeLevel)
